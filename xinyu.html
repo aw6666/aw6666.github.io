@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>心语Echo - 你的本地AI日记伴侣</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 基础样式与变量 */
+        :root {
+            --primary: #6366f1;
+            --primary-light: #a5b4fc;
+            --primary-dark: #4f46e5;
+            --secondary: #f0f9ff;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --background: #ffffff;
+            --card-bg: #f8fafc;
+            --gradient: linear-gradient(135deg, #a5b4fc 0%, #6366f1 100%);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, 'Segoe UI', 'Helvetica Neue', sans-serif; }
+        body { color: var(--text); line-height: 1.6; background: var(--background); }
+
+        /* 导航栏 */
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem 5%; background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
+        .logo { font-weight: 700; font-size: 1.5rem; color: var(--primary); display: flex; align-items: center; gap: 0.5rem; }
+        .logo i { color: var(--primary-light); }
+        .nav-links { display: flex; gap: 2rem; }
+        .nav-links a { text-decoration: none; color: var(--text); font-weight: 500; transition: color 0.3s; }
+        .nav-links a:hover { color: var(--primary); }
+        .cta-button { background: var(--primary); color: white; padding: 0.6rem 1.5rem; border-radius: 50px; text-decoration: none; font-weight: 600; transition: all 0.3s; border: none; cursor: pointer; }
+        .cta-button:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3); }
+
+        /* 英雄区域 */
+        .hero { padding: 5rem 5%; text-align: center; background: linear-gradient(to bottom, white, var(--secondary)); }
+        .hero h1 { font-size: 3.2rem; margin-bottom: 1rem; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .hero p { font-size: 1.2rem; color: var(--text-light); max-width: 700px; margin: 0 auto 2.5rem; }
+        .hero-image { max-width: 800px; margin: 3rem auto; border-radius: 20px; overflow: hidden; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); }
+        .hero-image img { width: 100%; height: auto; display: block; }
+
+        /* 核心价值区域 */
+        .features { padding: 5rem 5%; background: var(--card-bg); }
+        .section-title { text-align: center; font-size: 2.2rem; margin-bottom: 3.5rem; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; }
+        .feature-card { background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); transition: transform 0.3s; }
+        .feature-card:hover { transform: translateY(-10px); }
+        .feature-icon { width: 60px; height: 60px; background: var(--gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; }
+        .feature-icon i { font-size: 1.8rem; color: white; }
+        .feature-card h3 { font-size: 1.5rem; margin-bottom: 0.8rem; color: var(--text); }
+        .feature-card p { color: var(--text-light); }
+
+        /* 产品亮点/对比 */
+        .highlights { padding: 5rem 5%; background: white; }
+        .comparison { max-width: 900px; margin: 3rem auto; background: var(--card-bg); border-radius: 16px; padding: 2rem; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 1.2rem; text-align: left; border-bottom: 1px solid #e5e7eb; }
+        th { background-color: #f1f5f9; color: var(--primary-dark); font-weight: 600; }
+        .check { color: #10b981; font-weight: bold; }
+        .cross { color: #ef4444; font-weight: bold; }
+
+        /* 用户评价 */
+        .testimonials { padding: 5rem 5%; background: var(--secondary); }
+        .testimonial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; max-width: 1200px; margin: 0 auto; }
+        .testimonial-card { background: white; padding: 2rem; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        .testimonial-text { font-style: italic; margin-bottom: 1.5rem; color: var(--text); }
+        .testimonial-author { display: flex; align-items: center; gap: 1rem; }
+        .author-avatar { width: 50px; height: 50px; background: var(--gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; }
+
+        /* 常见问题 */
+        .faq { padding: 5rem 5%; background: white; max-width: 800px; margin: 0 auto; }
+        .faq-item { border-bottom: 1px solid #e5e7eb; padding: 1.5rem 0; }
+        .faq-question { font-weight: 600; font-size: 1.1rem; cursor: pointer; display: flex; justify-content: space-between; }
+        .faq-answer { padding-top: 1rem; color: var(--text-light); display: none; }
+        .faq-item.active .faq-answer { display: block; }
+
+        /* 页脚与行动号召 */
+        .footer-cta { text-align: center; padding: 5rem 5%; background: var(--gradient); color: white; }
+        .footer-cta h2 { font-size: 2.5rem; margin-bottom: 1.5rem; }
+        .footer-cta .cta-button { background: white; color: var(--primary); margin-top: 1.5rem; }
+        footer { text-align: center; padding: 2rem; color: var(--text-light); font-size: 0.9rem; background: var(--card-bg); }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .navbar { flex-direction: column; gap: 1rem; }
+            .nav-links { gap: 1.5rem; }
+            .hero h1 { font-size: 2.5rem; }
+            .hero p { font-size: 1rem; }
+            .features-grid, .testimonial-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="logo"><i class="fas fa-heart"></i> 心语Echo</div>
+        <div class="nav-links">
+            <a href="#features">核心价值</a>
+            <a href="#highlights">为何不同</a>
+            <a href="#testimonials">用户心声</a>
+            <a href="#faq">常见问题</a>
+        </div>
+        <a href="#cta" class="cta-button">立即体验</a>
+    </nav>
+
+    <!-- 主标题与介绍 -->
+    <section class="hero">
+        <h1>你的日记，你的AI伙伴</h1>
+        <p>「心语Echo」是一款买断制的本地AI日记应用。在这里，你的所有思绪都<strong>安全地留在手机里</strong>，同时拥有一位<strong>善于倾听、给予温暖回应</strong>的AI伙伴。</p>
+        <div class="hero-image">
+            <!-- 此处为占位图，你需要替换为真实的应用截图 -->
+            <div style="background: var(--gradient); height: 400px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem;">
+                🖼️ 应用界面展示图
+            </div>
+        </div>
+    </section>
+
+    <!-- 核心价值 -->
+    <section id="features" class="features">
+        <h2 class="section-title">我们相信，记录本该如此</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-user-shield"></i></div>
+                <h3>绝对隐私，本地优先</h3>
+                <p>采用“云+端”混合智能架构。你的原始日记<strong>永不完整上传</strong>，AI仅能接触到经本地处理的、隐去隐私的摘要。数据主权，完全归你。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-hand-holding-usd"></i></div>
+                <h3>一次买断，安心拥有</h3>
+                <p>拒绝无休止的订阅。一次付费，终身使用。为自己的数字资产买单，而不是租用。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-robot"></i></div>
+                <h3>有温度的AI伙伴</h3>
+                <p>不只是冰冷的记录。当你分享快乐、倾诉烦恼时，一位懂得共情的AI伙伴会给你<strong>温暖、积极、富有洞察力</strong>的回应。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-database"></i></div>
+                <h3>你的数据，你随时带走</h3>
+                <p>支持一键导出所有日记，生成标准数据包。换手机、做备份，你永远拥有数据的完全控制权和迁移自由。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 产品亮点对比 -->
+    <section id="highlights" class="highlights">
+        <h2 class="section-title">为何「心语Echo」与众不同</h2>
+        <div class="comparison">
+            <table>
+                <thead>
+                    <tr>
+                        <th>特性</th>
+                        <th>心语Echo</th>
+                        <th>传统云端日记</th>
+                        <th>纯本地日记</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>数据存储</td><td><span class="check">本地为主</span></td><td><span class="cross">厂商服务器</span></td><td><span class="check">仅限设备</span></td></tr>
+                    <tr><td>付费模式</td><td><span class="check">一次性买断</span></td><td><span class="cross">持续订阅</span></td><td><span class="check">买断/免费</span></td></tr>
+                    <tr><td>AI智能回应</td><td><span class="check">有温度的深度交流</span></td><td><span class="check">功能强大</span></td><td><span class="cross">无或极其简单</span></td></tr>
+                    <tr><td>隐私安全</td><td><span class="check">原始数据不出设备</span></td><td><span class="cross">依赖厂商信誉</span></td><td><span class="check">绝对安全</span></td></tr>
+                    <tr><td>数据迁移</td><td><span class="check">一键打包导出</span></td><td><span class="cross">通常受限</span></td><td><span class="check">自行管理文件</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- 用户评价 -->
+    <section id="testimonials" class="testimonials">
+        <h2 class="section-title">来自早期用户的心声</h2>
+        <div class="testimonial-grid">
+            <div class="testimonial-card">
+                <p class="testimonial-text">“终于找到一款既智能又让我放心的日记App。和AI聊完感觉真的有被理解，而不是面对一个冰冷的程序。”</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">林</div>
+                    <div><strong>林小姐</strong><br>自由插画师</div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <p class="testimonial-text">“买断制太良心了！数据在本地让我有安全感，导出的功能设计得很贴心，换手机再也不用担心日记丢失。”</p>
+                <div class="testimonial-author">
+                    <div class="author-avatar">王</div>
+                    <div><strong>王同学</strong><br>计算机系学生</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 常见问题 -->
+    <section id="faq" class="faq">
+        <h2 class="section-title">常见问题</h2>
+        <div class="faq-item" onclick="this.classList.toggle('active')">
+            <div class="faq-question">数据真的不上传吗？AI如何工作？ <i class="fas fa-chevron-down"></i></div>
+            <div class="faq-answer">
+                <p>我们采用“云+端混合架构”。当你记录时，应用会在本地对文本进行预处理（如隐去具体人名、地点），将不包含隐私的“情绪摘要”发送给云端大模型以获取高质量回应。你的原始日记始终加密存储在手机中，永不完整上传。</p>
+            </div>
+        </div>
+        <div class="faq-item" onclick="this.classList.toggle('active')">
+            <div class="faq-question">买断后，以后的功能更新要另外收费吗？ <i class="fas fa-chevron-down"></i></div>
+            <div class="faq-answer">
+                <p>核心的日记、AI陪伴、数据导出功能一次性买断。我们承诺，所有安全性和体验优化更新都将免费。未来如果增加全新的、成本高昂的重大功能模块（如高级AI分析），可能会以可选升级包的形式提供，但绝不会影响已购用户的核心使用。</p>
+            </div>
+        </div>
+        <div class="faq-item" onclick="this.classList.toggle('active')">
+            <div class="faq-question">支持换手机或跨平台（iOS/Android）吗？ <i class="fas fa-chevron-down"></i></div>
+            <div class="faq-answer">
+                <p>完全支持。应用内提供“生成备份文件”功能，会将所有日记和设置打包成一个标准文件。你可以在旧设备上导出该文件，然后在新设备上的「心语Echo」中导入，即可无缝迁移全部数据。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 行动号召 -->
+    <section id="cta" class="footer-cta">
+        <h2>开始你的私密对话</h2>
+        <p>拥抱科技带来的温暖，同时牢牢掌握自己的数据主权。</p>
+        <a href="#" class="cta-button">前往应用商店下载</a>
+        <p style="margin-top: 2rem; font-size: 0.9rem; opacity: 0.9;">即将登陆 iOS App Store 与 Google Play</p>
+    </section>
+
+    <!-- 页脚 -->
+    <footer>
+        <p>© 2023 心语Echo. 保留所有权利。 |  Designed with <i class="fas fa-heart" style="color:#ef4444;"></i> for your inner peace.</p>
+        <p style="margin-top: 0.5rem; font-size: 0.8rem;">这是一个产品概念网站，实际产品正在开发中。</p>
+    </footer>
+
+    <script>
+        // 简单的FAQ切换逻辑
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', (e) => {
+                // 阻止事件冒泡，避免触发父级faq-item的点击事件两次
+                e.stopPropagation();
+                const item = question.parentElement;
+                item.classList.toggle('active');
+            });
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                if(targetId === '#') return;
+                const targetElement = document.querySelector(targetId);
+                if(targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
